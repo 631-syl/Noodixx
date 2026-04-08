@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Love Connect - Real Connections</title>
+    <title>Noodixx: Find your match</title>
     <style>
         /* --- CSS VARIABLES & BASE --- */
         :root {
@@ -196,35 +196,6 @@
         .tag { background: var(--bg-light); padding: 5px 10px; border-radius: 15px; font-size: 0.85rem; }
         .profile-action { margin-top: auto; padding-top: 15px; text-align: center; }
 
-        /* --- REGISTRATION & M-PESA --- */
-        .form-container {
-            background: var(--white);
-            max-width: 500px;
-            margin: 0 auto;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: bold; }
-        .form-group input, .form-group select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            outline: none;
-        }
-        .form-group input:focus { border-color: var(--primary); }
-
-        #payment-section { display: none; text-align: center; }
-        .spinner {
-            display: none; width: 40px; height: 40px;
-            border: 4px solid var(--bg-light); border-top: 4px solid var(--primary);
-            border-radius: 50%; margin: 20px auto; animation: spin 1s linear infinite;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
         /* --- CHAT PAGE --- */
         .chat-container {
             background: var(--white); border-radius: 15px; padding: 20px;
@@ -256,7 +227,7 @@
 <body>
 
     <nav>
-        <div class="logo" onclick="navigateTo('home')">Love Birds.com</div>
+        <div class="logo" onclick="navigateTo('home')">Noodixx.com</div>
         <div class="dropdown">
             <button class="dropbtn">Menu &#9662;</button>
             <div class="dropdown-content">
@@ -269,7 +240,7 @@
 
     <div id="home" class="page active">
         <div class="welcome-section">
-            <h1>Welcome to OrangeDate</h1>
+            <h1>Welcome to Noodixx.com</h1>
             <p>Where Real Connections Happen.</p>
         </div>
 
@@ -293,13 +264,31 @@
                     <label>Email Address</label>
                     <input type="email" required placeholder="name@example.com">
                 </div>
-                <div class="form-group">
-                    <label>M-Pesa Phone Number</label>
-                    <input type="tel" required placeholder="07XX XXX XXX">
+                <div>
+                    <div class="form group">
+                        <label>Password</label>
+                        <input id="len" min="6" type="number" value="12" />
+        </label>
+        <br />
+        <label>
+            <input id="upper" type="checkbox" checked /> Include Uppercase
+        </label>
+        <br />
+        <label>
+            <input id="nums" type="checkbox" checked /> Include Numbers
+        </label>
+        <br />
+        <label>
+            <input id="special" type="checkbox" checked /> Include Special Characters
+        </label>
+        <br />
+        <button class="btn" onclick="generate()">Generate Password</button>
+        <button class="btn" onclick="reset()">Reset</button>
+        <div class="output" id="passOut">Your password will appear here</div>
                 </div>
                 <div style="display: flex; gap: 10px;">
                     <div class="form-group" style="flex: 1;">
-                        <label>Age</label><input type="number" required>
+                        <label>Age</label><input type="number" min="18" max="120" name="age" id="age" required>
                     </div>
                     <div class="form-group" style="flex: 1;">
                         <label>Height (cm)</label><input type="number" required>
@@ -313,26 +302,20 @@
                         <option>Friendship</option>
                     </select>
                 </div>
-                <button type="submit" class="btn" style="width: 100%;">Continue to Payment</button>
+                <button type="submit" class="btn" style="width: 100%;">Create Account</button>
             </form>
         </div>
 
-        <div class="form-container" id="payment-section">
+        <div class="form-container" id="message button">
             <h2 style="color: var(--primary); margin-bottom: 15px;">Activate Account</h2>
-            <p>To start messaging users, a one-time setup fee of <strong>100 Kshs</strong> is required.</p>
             <br>
-            <button class="btn" onclick="processPayment()">Pay 100 Kshs via M-Pesa</button>
-            <button class="btn" onclick="navigateTo('home')" style="border-color: #999; color: #999; margin-top: 10px;">Cancel</button>
-            
-            <div class="spinner" id="payment-spinner"></div>
-            <p id="payment-status" style="margin-top: 15px; color: var(--primary); font-weight: bold;"></p>
         </div>
     </div>
 
     <div id="chat" class="page">
         <div class="chat-container" id="chat-content">
-            <h2 style="color: var(--primary);">Access Denied</h2>
-            <p style="margin: 20px 0;">You must create an account and complete the 100 Kshs payment to message users.</p>
+            <h2 style="color: var(--primary);">Welcome to your inbox</h2>
+            <p style="margin: 20px 0;">You must create an account to message users.</p>
             <button class="btn" onclick="navigateTo('register')">Create Account</button>
         </div>
     </div>
@@ -377,8 +360,6 @@
         }, 4000);
         document.getElementById('tips').innerText = tips[0]; // Init
 
-        // --- LOAD MOCK PROFILES ---
-        // These represent the AI-generated Black men and women examples requested
         const profiles = [
             { name: "Aisha", age: 24, img: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=500&auto=format&fit=crop", height: "165cm", type: "Athletic", looking: "Long-term relationship" },
             { name: "Kwame", age: 28, img: "https://images.unsplash.com/photo-1506803682981-6e718a9dd3ee?w=500&auto=format&fit=crop", height: "180cm", type: "Fit", looking: "Casual dating" },
@@ -405,63 +386,6 @@
                 </div>
             `;
         });
-
-        // --- M-PESA & REGISTRATION LOGIC ---
-        let isPaidUser = false;
-
-        document.getElementById('registrationForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            // Hide form, show payment
-            document.getElementById('reg-form-container').style.display = 'none';
-            document.getElementById('payment-section').style.display = 'block';
-        });
-
-        function processPayment() {
-            const spinner = document.getElementById('payment-spinner');
-            const status = document.getElementById('payment-status');
-            
-            spinner.style.display = 'block';
-            status.innerText = "Check your phone for the M-Pesa PIN prompt...";
-
-            // Simulate API Delay
-            setTimeout(() => {
-                spinner.style.display = 'none';
-                status.innerText = "Payment Confirmed! Account created successfully.";
-                status.style.color = "green";
-                isPaidUser = true;
-
-                // Update Chat Page UI
-                document.getElementById('chat-content').innerHTML = `
-                    <h2 style="color: var(--primary);">Your Messages</h2>
-                    <p>Select a profile to start chatting.</p>
-                `;
-
-                // Redirect to Home after success
-                setTimeout(() => {
-                    navigateTo('home');
-                }, 2000);
-
-            }, 3000);
-        }
-
-        function attemptMessage(name) {
-            if (isPaidUser) {
-                navigateTo('chat');
-                document.getElementById('chat-content').innerHTML = `
-                    <h2 style="color: var(--primary);">Chatting with ${name}</h2>
-                    <div style="flex-grow: 1; width: 100%; border: 1px solid #eee; margin: 20px 0; border-radius: 10px; padding: 10px; background: var(--bg-light);">
-                        <p style="text-align: center; color: #888;">Start of your conversation</p>
-                    </div>
-                    <div style="width: 100%; display: flex; gap: 10px;">
-                        <input type="text" placeholder="Type a message..." style="flex-grow: 1; padding: 10px; border-radius: 20px; border: 1px solid #ccc;">
-                        <button class="btn">Send</button>
-                    </div>
-                `;
-            } else {
-                alert("You need to register and complete the 100 Kshs setup fee to send messages.");
-                navigateTo('register');
-            }
-        }
     </script>
 </body>
 </html>
