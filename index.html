@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OrangeDate - Real Connections</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- EmailJS -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+    <style>
+        :root {
+            --primary: #FF5722;
+            --primary-hover: #E64A19;
+            --bg-light: #FFF3E0;
+            --text-dark: #333333;
+            --white: #FFFFFF;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg-light); color: var(--text-dark); overflow-x: hidden; }
+
+        /* BUTTONS */
+        .btn-od {
+            background-color: var(--white); color: var(--primary); border: 2px solid var(--primary);
+            padding: 12px 24px; border-radius: 30px; font-weight: bold; cursor: pointer;
+            transition: all 0.3s ease; font-size: 1rem; display: inline-block; text-align: center;
+        }
+        .btn-od:hover { background-color: var(--primary); color: var(--white); box-shadow: 0 4px 10px rgba(255,87,34,0.3); }
+        .btn-od:active { transform: scale(0.95); }
+        .btn-icon {
+            background-color: var(--white); color: var(--primary); border: 2px solid var(--primary);
+            padding: 8px 13px; border-radius: 30px; font-weight: bold; cursor: pointer;
+            transition: all 0.3s ease; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 4px;
+        }
+        .btn-icon:hover { background-color: var(--primary); color: var(--white); box-shadow: 0 3px 8px rgba(255,87,34,0.3); }
+        .btn-icon:active { transform: scale(0.95); }
+
+        /* NAV */
+        nav {
+            background-color: var(--white); padding: 15px 30px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 200;
+        }
+        .logo { color: var(--primary); font-size: 1.5rem; font-weight: bold; cursor: pointer; }
+        .dropdown { position: relative; display: inline-block; }
+        .dropbtn { background: transparent; color: var(--primary); border: none; font-size: 1.1rem; cursor: pointer; font-weight: bold; }
+        .dropdown-content {
+            display: none; position: absolute; right: 0; background: var(--white);
+            min-width: 190px; box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            z-index: 1; border-radius: 8px; overflow: hidden; opacity: 0; transition: opacity 0.3s;
+        }
+        .dropdown-content a { color: var(--text-dark); padding: 12px 16px; text-decoration: none; display: block; transition: background 0.2s; }
+        .dropdown-content a:hover { background: var(--bg-light); color: var(--primary); }
+        .dropdown:hover .dropdown-content { display: block; opacity: 1; }
+
+        /* PAGES */
+        .page { display: none; padding: 40px 20px; max-width: 1200px; margin: 0 auto; animation: fadeIn 0.4s ease; min-height: 80vh; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* HOME */
+        .welcome-section { text-align: center; margin-bottom: 40px; }
+        .welcome-section h1 { color: var(--primary); margin-bottom: 10px; }
+        .tips-carousel {
+            background: var(--white); padding: 15px; border-radius: 10px;
+            border-left: 5px solid var(--primary); margin: 0 auto 40px auto;
+            max-width: 600px; font-style: italic; text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: opacity 0.3s;
+        }
+        .profiles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; }
+        .profile-card { background: var(--white); border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.1); transition: transform 0.3s; display: flex; flex-direction: column; }
+        .profile-card:hover { transform: translateY(-5px); }
+        .profile-img { width: 100%; height: 350px; object-fit: cover; }
+        .profile-info { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
+        .profile-info h3 { color: var(--primary); font-size: 1.4rem; margin-bottom: 5px; }
+        .tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+        .tag { background: var(--bg-light); padding: 5px 10px; border-radius: 15px; font-size: 0.85rem; }
+        .profile-action { margin-top: auto; padding-top: 15px; display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+
+        /* FORMS */
+        .form-container { background: var(--white); max-width: 500px; margin: 0 auto; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: bold; }
+        .form-group input, .form-group select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; outline: none; font-size: 0.95rem; }
+        .form-group input:focus, .form-group select:focus { border-color: var(--primary); }
+        .form-error { color: #d32f2f; background: #fdecea; border: 1px solid #f5c6c6; border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; font-size: 0.92rem; display: none; }
+        .form-link { text-align: center; margin-top: 16px; font-size: 0.9rem; color: #555; }
+        .form-link a { color: var(--primary); font-weight: bold; text-decoration: none; }
+
+        /* MESSAGING LIST */
+        .messaging-page { background: var(--white); border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); overflow: hidden; max-width: 680px; margin: 0 auto; }
+        .messaging-header { background: var(--primary); color: var(--white); padding: 20px 24px; font-size: 1.2rem; font-weight: bold; }
+        .chat-list-item { display: flex; align-items: center; gap: 16px; padding: 16px 24px; border-bottom: 1px solid #f0e6d8; cursor: pointer; transition: background 0.2s; }
+        .chat-list-item:last-child { border-bottom: none; }
+        .chat-list-item:hover { background: var(--bg-light); }
+        .chat-list-avatar { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; flex-shrink: 0; border: 2px solid var(--primary); }
+        .chat-list-info { flex-grow: 1; min-width: 0; }
+        .chat-list-name { font-weight: bold; color: var(--text-dark); font-size: 1rem; }
+        .chat-list-preview { font-size: 0.85rem; color: #888; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .chat-list-time { font-size: 0.78rem; color: #aaa; flex-shrink: 0; }
+        .chat-unread { background: var(--primary); color: var(--white); border-radius: 50%; width: 20px; height: 20px; font-size: 0.72rem; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; }
+        .no-chats { padding: 50px 24px; text-align: center; color: #aaa; font-size: 0.95rem; }
+
+        /* INBOX */
+        .inbox-wrapper { background: var(--white); border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); overflow: hidden; max-width: 680px; margin: 0 auto; display: flex; flex-direction: column; height: 600px; }
+        .inbox-header { background: var(--primary); color: var(--white); padding: 14px 20px; display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+        .inbox-header img { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(255,255,255,0.5); }
+        .inbox-header-name { flex-grow: 1; font-weight: bold; font-size: 1.05rem; }
+        .inbox-call-btns { display: flex; gap: 10px; }
+        .call-btn { background: rgba(255,255,255,0.2); border: none; color: var(--white); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+        .call-btn:hover { background: rgba(255,255,255,0.35); }
+        .back-btn { background: rgba(255,255,255,0.2); border: none; color: var(--white); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; transition: background 0.2s; flex-shrink: 0; }
+        .back-btn:hover { background: rgba(255,255,255,0.35); }
+        .messages-area { flex-grow: 1; overflow-y: auto; padding: 20px; background: var(--bg-light); display: flex; flex-direction: column; gap: 10px; }
+        .msg-bubble { max-width: 70%; padding: 10px 14px; border-radius: 18px; font-size: 0.93rem; line-height: 1.4; word-wrap: break-word; }
+        .msg-bubble.sent { background: var(--primary); color: var(--white); align-self: flex-end; border-bottom-right-radius: 4px; }
+        .msg-bubble.received { background: var(--white); color: var(--text-dark); align-self: flex-start; border-bottom-left-radius: 4px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+        .msg-bubble.voice-note { display: flex; align-items: center; gap: 10px; padding: 8px 14px; }
+        .voice-play-btn { background: none; border: none; cursor: pointer; font-size: 1.2rem; color: inherit; flex-shrink: 0; }
+        .voice-bar { flex-grow: 1; height: 4px; background: rgba(255,255,255,0.4); border-radius: 2px; overflow: hidden; }
+        .msg-bubble.received .voice-bar { background: #e0d0c0; }
+        .voice-progress { height: 100%; width: 0%; background: var(--white); border-radius: 2px; transition: width 0.1s linear; }
+        .msg-bubble.received .voice-progress { background: var(--primary); }
+        .voice-duration { font-size: 0.78rem; opacity: 0.8; flex-shrink: 0; }
+        .msg-time { font-size: 0.7rem; color: #bbb; text-align: right; margin-top: 2px; }
+        .msg-time.received-time { text-align: left; }
+        .inbox-input-bar { padding: 12px 16px; background: var(--white); border-top: 1px solid #f0e6d8; display: flex; gap: 10px; align-items: center; flex-shrink: 0; }
+        .inbox-input-bar input { flex-grow: 1; padding: 10px 16px; border-radius: 22px; border: 1px solid #ddd; outline: none; font-size: 0.93rem; }
+        .inbox-input-bar input:focus { border-color: var(--primary); }
+        .send-btn { background: var(--primary); color: var(--white); border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; transition: background 0.2s; flex-shrink: 0; }
+        .send-btn:hover { background: var(--primary-hover); }
+        .voice-record-btn { background: none; border: 2px solid var(--primary); color: var(--primary); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
+        .voice-record-btn.recording { background: var(--primary); color: var(--white); animation: pulse 1s infinite; }
+        @keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(255,87,34,0.4);}50%{box-shadow:0 0 0 8px rgba(255,87,34,0);} }
+
+        /* VIDEO CALL */
+        .video-overlay { display: none; position: fixed; inset: 0; background: #1a1a2e; z-index: 1050; flex-direction: column; align-items: center; justify-content: center; }
+        .video-overlay.active { display: flex; }
+        .video-screens { display: flex; gap: 20px; margin-bottom: 30px; flex-wrap: wrap; justify-content: center; }
+        .video-screen { background: #2a2a4a; border-radius: 16px; width: 280px; height: 200px; display: flex; align-items: center; justify-content: center; font-size: 3rem; position: relative; border: 2px solid rgba(255,87,34,0.4); }
+        .video-screen-label { position: absolute; bottom: 10px; left: 14px; color: rgba(255,255,255,0.6); font-size: 0.8rem; }
+        .video-call-name { color: var(--white); font-size: 1.4rem; font-weight: bold; margin-bottom: 8px; }
+        .video-call-status { color: rgba(255,255,255,0.6); font-size: 0.9rem; margin-bottom: 30px; }
+        .video-controls { display: flex; gap: 16px; }
+        .vc-btn { width: 56px; height: 56px; border-radius: 50%; border: none; cursor: pointer; font-size: 1.3rem; display: flex; align-items: center; justify-content: center; transition: transform 0.2s; }
+        .vc-btn:hover { transform: scale(1.1); }
+        .vc-btn.end { background: #e53935; color: var(--white); }
+        .vc-btn.mute { background: rgba(255,255,255,0.15); color: var(--white); }
+        .vc-btn.cam { background: rgba(255,255,255,0.15); color: var(--white); }
+
+        /* CHATBOT FAB */
+        .chatbot-fab { position: fixed; bottom: 30px; right: 30px; background: var(--primary); color: var(--white); width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 24px; cursor: pointer; box-shadow: 0 4px 15px rgba(255,87,34,0.4); transition: transform 0.3s ease; z-index: 1040; border: none; }
+        .chatbot-fab:hover { transform: scale(1.1); }
+
+        /* CHATBOT MODAL */
+        .chatbot-modal-content { border-radius: 15px; overflow: hidden; border: none; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+        .chatbot-modal-header { background: var(--primary); color: var(--white); border-bottom: none; padding: 16px 20px; }
+        .chatbot-modal-header .btn-close { filter: brightness(0) invert(1); }
+        .chatbot-messages { height: 340px; overflow-y: auto; padding: 16px; background: var(--bg-light); display: flex; flex-direction: column; gap: 10px; }
+        .chatbot-bubble { max-width: 82%; padding: 10px 14px; border-radius: 18px; font-size: 0.92rem; line-height: 1.45; }
+        .chatbot-bubble.user { background: var(--primary); color: var(--white); align-self: flex-end; border-bottom-right-radius: 4px; }
+        .chatbot-bubble.bot { background: var(--white); color: var(--text-dark); align-self: flex-start; border-bottom-left-radius: 4px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+        .chatbot-bubble.typing { font-style: italic; color: #aaa; }
+        .chatbot-input-area { display: flex; gap: 10px; align-items: center; padding: 12px 16px; background: var(--white); border-top: 1px solid #f0e6d8; }
+        .chatbot-input-area input { flex-grow: 1; padding: 10px 14px; border-radius: 22px; border: 1px solid #ddd; outline: none; font-size: 0.9rem; }
+        .chatbot-input-area input:focus { border-color: var(--primary); }
+        .chatbot-send-btn { background: var(--primary); color: var(--white); border: none; width: 38px; height: 38px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1rem; transition: background 0.2s; flex-shrink: 0; }
+        .chatbot-send-btn:hover { background: var(--primary-hover); }
+
+        /* FOOTER */
+        footer { background: var(--white); text-align: center; padding: 20px; border-top: 1px solid #ddd; margin-top: 40px; }
+        .footer-links a { color: var(--primary); text-decoration: none; margin: 0 10px; font-weight: bold; }
+
+        /* NAV BADGE */
+        #nav-user-badge { font-size: 0.85rem; color: var(--primary); font-weight: bold; display: none; }
+    </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+    <div class="logo" onclick="navigateTo('home')">Love Birds.com</div>
+    <div style="display:flex;align-items:center;gap:12px;">
+        <span id="nav-user-badge"></span>
+        <div class="dropdown">
+            <button class="dropbtn">Menu &#9662;</button>
+            <div class="dropdown-content">
+                <a href="#" onclick="navigateTo('home');return false;">Homepage</a>
+                <a href="#" id="nav-register" onclick="navigateTo('register');return false;">Create Account</a>
+                <a href="#" id="nav-signin" onclick="navigateTo('signin');return false;">Sign In</a>
+                <a href="#" onclick="navigateTo('chat');return false;">Messages</a>
+                <a href="#" id="nav-logout" style="display:none;color:#e53935;" onclick="logOut();return false;">Log Out</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- HOME PAGE -->
+<div id="home" class="page active">
+    <div class="welcome-section">
+        <h1>Welcome to OrangeDate</h1>
+        <p>Where Real Connections Happen.</p>
+    </div>
+    <div class="tips-carousel" id="tips">Loading dating tips...</div>
+    <div class="profiles-grid" id="profile-feed"></div>
+</div>
+
+<!-- REGISTER PAGE -->
+<div id="register" class="page">
+    <div class="form-container">
+        <h2 style="color:var(--primary);margin-bottom:20px;text-align:center;">Create Your Profile</h2>
+        <form id="registrationForm" autocomplete="off">
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="reg-name" required placeholder="e.g. Jane Doe">
+            </div>
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" id="reg-email" required placeholder="name@example.com">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="reg-password" required placeholder="Min 6 characters">
+            </div>
+            <div style="display:flex;gap:10px;">
+                <div class="form-group" style="flex:1;">
+                    <label>Age</label>
+                    <input type="number" id="reg-age" min="18" max="120" required placeholder="18+">
+                </div>
+                <div class="form-group" style="flex:1;">
+                    <label>Height (cm)</label>
+                    <input type="number" id="reg-height" required placeholder="e.g. 170">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Body Type</label>
+                <select id="reg-type" required>
+                    <option value="">Select...</option>
+                    <option>Athletic</option><option>Slim</option><option>Average</option>
+                    <option>Curvy</option><option>Fit</option><option>Plus-size</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>What are you looking for?</label>
+                <select id="reg-looking" required>
+                    <option value="">Select...</option>
+                    <option>Long-term relationship</option>
+                    <option>Casual dating</option>
+                    <option>Friendship</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Profile Photo URL <span style="font-weight:normal;color:#999;">(optional)</span></label>
+                <input type="url" id="reg-photo" placeholder="https://... (leave blank for default)">
+            </div>
+            <div class="form-error" id="reg-error"></div>
+            <button type="submit" class="btn-od" style="width:100%;">Create Account</button>
+            <div class="form-link">Already have an account? <a href="#" onclick="navigateTo('signin');return false;">Sign In</a></div>
+        </form>
+    </div>
+</div>
+
+<!-- SIGN IN PAGE -->
+<div id="signin" class="page">
+    <div class="form-container">
+        <h2 style="color:var(--primary);margin-bottom:20px;text-align:center;">Welcome Back</h2>
+        <form id="signinForm" autocomplete="off">
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" id="signin-email" required placeholder="name@example.com">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="signin-password" required placeholder="********">
+            </div>
+            <div class="form-error" id="signin-error"></div>
+            <button type="submit" class="btn-od" style="width:100%;">Sign In</button>
+            <div class="form-link">Don't have an account? <a href="#" onclick="navigateTo('register');return false;">Create one</a></div>
+        </form>
+    </div>
+</div>
+
+<!-- MESSAGES LIST PAGE -->
+<div id="chat" class="page">
+    <div class="messaging-page">
+        <div class="messaging-header">💬 Messages</div>
+        <div id="chat-list-body">
+            <div class="no-chats">Sign in to view your conversations.</div>
+        </div>
+    </div>
+</div>
+
+<!-- INBOX PAGE -->
+<div id="inbox" class="page">
+    <div class="inbox-wrapper">
+        <div class="inbox-header">
+            <button class="back-btn" onclick="navigateTo('chat')" title="Back">&#8592;</button>
+            <img id="inbox-avatar" src="" alt="">
+            <span class="inbox-header-name" id="inbox-name"></span>
+            <div class="inbox-call-btns">
+                <button class="call-btn" onclick="startVoiceCallFromInbox()" title="Voice call">🎙️</button>
+                <button class="call-btn" onclick="startVideoCallFromInbox()" title="Video call">📹</button>
+            </div>
+        </div>
+        <div class="messages-area" id="messages-area">
+            <p style="text-align:center;color:#bbb;margin:auto;">Start the conversation!</p>
+        </div>
+        <div class="inbox-input-bar">
+            <button class="voice-record-btn" id="voice-record-btn" onclick="toggleVoiceRecording()" title="Voice note">🎤</button>
+            <input type="text" id="msg-input" placeholder="Type a message…" onkeydown="if(event.key==='Enter')sendMessage()">
+            <button class="send-btn" onclick="sendMessage()">&#10148;</button>
+        </div>
+    </div>
+</div>
+
+<!-- VIDEO CALL OVERLAY -->
+<div class="video-overlay" id="video-overlay">
+    <div class="video-screens" id="video-screens">
+        <div class="video-screen"><span>🙂</span><span class="video-screen-label">You</span></div>
+        <div class="video-screen"><span>😊</span><span class="video-screen-label" id="video-call-label"></span></div>
+    </div>
+    <div class="video-call-name" id="video-call-name"></div>
+    <div class="video-call-status" id="video-call-status">Connecting…</div>
+    <div class="video-controls">
+        <button class="vc-btn mute" id="vc-mute" onclick="toggleMute()">🎤</button>
+        <button class="vc-btn end" onclick="endCall()">📵</button>
+        <button class="vc-btn cam" id="vc-cam" onclick="toggleCam()">📹</button>
+    </div>
+</div>
+
+<!-- CHATBOT FAB (icon unchanged) -->
+<button class="chatbot-fab" onclick="openChatbot()" title="Chat with AI">💬</button>
+
+<!-- CHATBOT MODAL (Bootstrap 5) -->
+<div class="modal fade" id="chatbotModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width:420px;">
+        <div class="modal-content chatbot-modal-content">
+            <div class="modal-header chatbot-modal-header">
+                <h5 class="modal-title">💬 OrangeDate AI Assistant</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0">
+                <div class="chatbot-messages" id="chatbot-messages">
+                    <div class="chatbot-bubble bot">Hi! 👋 I'm your OrangeDate assistant. Ask me anything — dating tips, profile advice, or how to use the app!</div>
+                </div>
+                <div class="chatbot-input-area">
+                    <input type="text" id="chatbot-input" placeholder="Ask me anything…" onkeydown="if(event.key==='Enter')sendChatbotMessage()">
+                    <button class="chatbot-send-btn" onclick="sendChatbotMessage()">&#10148;</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+    <div class="footer-links">
+        <a href="#">Contact Us</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+    </div>
+    <p style="margin-top:10px;font-size:0.8rem;color:#666;">© 2026 OrangeDate. All rights reserved.</p>
+</footer>
+
+<!-- Bootstrap 5 JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+/*
+ * ═══════════════════════════════════════════════════════════════
+ *  ORANGEDATE  –  CLIENT-SIDE DATABASE  (localStorage)
+ *
+ *  In a production app this would be replaced by a real MySQL/
+ *  Java backend. All data persists in the browser's localStorage,
+ *  giving it full database-like behaviour within a single device.
+ *
+ *  Schema
+ *  ──────
+ *  od_users          → JSON[]   User records
+ *  od_conversations  → JSON{}   Messages keyed by sorted email pair
+ *  od_session        → string   Email of logged-in user
+ * ═══════════════════════════════════════════════════════════════
+ */
+const DB = {
+    // ── USERS ─────────────────────────────────────────────────
+    getUsers()         { return JSON.parse(localStorage.getItem('od_users') || '[]'); },
+    saveUsers(u)       { localStorage.setItem('od_users', JSON.stringify(u)); },
+    findUser(email)    { return this.getUsers().find(u => u.email === email.toLowerCase()); },
+    registerUser(user) {
+        const users = this.getUsers();
+        if (users.find(u => u.email === user.email)) return false;
+        users.push(user);
+        this.saveUsers(users);
+        return true;
+    },
+
+    // ── SESSION ───────────────────────────────────────────────
+    getSession()       { return localStorage.getItem('od_session') || null; },
+    setSession(email)  { localStorage.setItem('od_session', email); },
+    clearSession()     { localStorage.removeItem('od_session'); },
+    currentUser()      { const e = this.getSession(); return e ? this.findUser(e) : null; },
+
+    // ── CONVERSATIONS ─────────────────────────────────────────
+    convKey(a, b)      { return [a, b].sort().join('|||'); },
+    getAllConvs()       { return JSON.parse(localStorage.getItem('od_conversations') || '{}'); },
+    getConv(a, b)      { return this.getAllConvs()[this.convKey(a, b)] || []; },
+    addMsg(a, b, msg)  {
+        const all = this.getAllConvs();
+        const key = this.convKey(a, b);
+        if (!all[key]) all[key] = [];
+        all[key].push(msg);
+        localStorage.setItem('od_conversations', JSON.stringify(all));
+    },
+    markRead(a, b, reader) {
+        const all = this.getAllConvs();
+        const key = this.convKey(a, b);
+        if (!all[key]) return;
+        all[key].forEach(m => { if (m.to === reader) m.read = true; });
+        localStorage.setItem('od_conversations', JSON.stringify(all));
+    }
+};
+
+// ═══════════════════════════════════════════════════════════════
+//  CONFIG  –  replace placeholder values with real credentials
+// ═══════════════════════════════════════════════════════════════
+// Gemini API key  →  https://aistudio.google.com/apikey
+const GEMINI_KEY = 'YOUR_GEMINI_API_KEY';
+const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`;
+
+// EmailJS  →  https://www.emailjs.com  (free tier works)
+// 1. Create a service connected to Gmail
+// 2. Create a template with variables: {{from_name}}, {{from_email}}, {{message}}, {{subject}}
+// 3. Paste your Public Key, Service ID and Template ID below
+const EJS_PUBLIC   = 'YOUR_EMAILJS_PUBLIC_KEY';
+const EJS_SERVICE  = 'YOUR_EMAILJS_SERVICE_ID';
+const EJS_TEMPLATE = 'YOUR_EMAILJS_TEMPLATE_ID';
+const NOTIFY_EMAIL = 'newthings334@gmail.com';
+
+emailjs.init(EJS_PUBLIC);
+
+// ═══════════════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════════════
+let activeChat      = null;
+let isRecording     = false;
+let recordingTimer  = null;
+let recordingSeconds = 0;
+let isMuted         = false;
+let isCamOff        = false;
+let callTimer       = null;
+
+// Seed profiles (demo users – not in localStorage)
+const SEED = [
+    { name:'Aisha', age:24, email:'aisha@demo.com',  img:'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=500&auto=format&fit=crop', height:'165cm', type:'Athletic', looking:'Long-term relationship' },
+    { name:'Kwame', age:28, email:'kwame@demo.com',  img:'https://images.unsplash.com/photo-1506803682981-6e718a9dd3ee?w=500&auto=format&fit=crop', height:'180cm', type:'Fit',      looking:'Casual dating' },
+    { name:'Zola',  age:26, email:'zola@demo.com',   img:'https://images.unsplash.com/photo-1531384441138-2736e62e0919?w=500&auto=format&fit=crop', height:'170cm', type:'Curvy',    looking:'Friendship first' },
+    { name:'Malik', age:30, email:'malik@demo.com',  img:'https://images.unsplash.com/photo-1522529599102-193c0d76b5b6?w=500&auto=format&fit=crop', height:'185cm', type:'Average',  looking:'Long-term relationship' }
+];
+
+function avatarURL(name) {
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=FF5722&color=fff&size=400`;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════════════════════════════════
+function navigateTo(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo(0, 0);
+    if (id === 'chat')  renderChatList();
+    if (id === 'home')  renderProfiles();
+    if (id === 'inbox') renderMessages();
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  NAV UI
+// ═══════════════════════════════════════════════════════════════
+function updateNavUI() {
+    const user = DB.currentUser();
+    const badge    = document.getElementById('nav-user-badge');
+    const logout   = document.getElementById('nav-logout');
+    const register = document.getElementById('nav-register');
+    const signin   = document.getElementById('nav-signin');
+    if (user) {
+        badge.textContent  = '👤 ' + user.name.split(' ')[0];
+        badge.style.display = 'inline';
+        register.style.display = 'none';
+        signin.style.display   = 'none';
+        logout.style.display   = 'block';
+    } else {
+        badge.style.display    = 'none';
+        register.style.display = 'block';
+        signin.style.display   = 'block';
+        logout.style.display   = 'none';
+    }
+}
+
+function logOut() {
+    DB.clearSession();
+    updateNavUI();
+    navigateTo('home');
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  PROFILE CARDS  (seed + all registered users)
+// ═══════════════════════════════════════════════════════════════
+function renderProfiles() {
+    const feed = document.getElementById('profile-feed');
+    const me   = DB.currentUser();
+    const seedEmails = SEED.map(p => p.email);
+    const regUsers   = DB.getUsers()
+        .filter(u => !seedEmails.includes(u.email))
+        .map(u => ({
+            name: u.name, age: u.age, email: u.email,
+            img: u.img || '', height: u.height + 'cm',
+            type: u.type, looking: u.looking
+        }));
+
+    const all = [...SEED, ...regUsers];
+    feed.innerHTML = all.map(p => {
+        const isSelf = me && me.email === p.email;
+        const canChat = me && !isSelf;
+        const imgSrc  = p.img || avatarURL(p.name);
+        const actions = isSelf
+            ? `<span style="font-size:0.82rem;color:#bbb;padding:8px 0;">✓ Your profile</span>`
+            : canChat
+                ? `<button class="btn-icon" onclick="openInbox('${p.email}')">💬 Message</button>
+                   <button class="btn-icon" onclick="startVoiceCall('${p.name}')">🎙️ Voice</button>
+                   <button class="btn-icon" onclick="startVideoCall('${p.name}')">📹 Video</button>`
+                : `<button class="btn-icon" onclick="navigateTo('signin');return false;">Sign in to message</button>`;
+
+        return `
+            <div class="profile-card">
+                <img src="${imgSrc}" alt="${p.name}" class="profile-img"
+                     onerror="this.src='${avatarURL(p.name)}'">
+                <div class="profile-info">
+                    <h3>${escapeHTML(p.name)}, ${p.age}</h3>
+                    <div class="tags">
+                        <span class="tag">${p.height}</span>
+                        <span class="tag">${p.type}</span>
+                    </div>
+                    <p style="font-size:0.9rem;color:#555;">
+                        <strong>Looking for:</strong> ${p.looking}
+                    </p>
+                    <div class="profile-action">${actions}</div>
+                </div>
+            </div>`;
+    }).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  REGISTRATION
+// ═══════════════════════════════════════════════════════════════
+document.getElementById('registrationForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const errorEl = document.getElementById('reg-error');
+    const name    = document.getElementById('reg-name').value.trim();
+    const email   = document.getElementById('reg-email').value.trim().toLowerCase();
+    const pw      = document.getElementById('reg-password').value;
+    const age     = parseInt(document.getElementById('reg-age').value);
+    const height  = parseInt(document.getElementById('reg-height').value);
+    const type    = document.getElementById('reg-type').value;
+    const looking = document.getElementById('reg-looking').value;
+    const img     = document.getElementById('reg-photo').value.trim();
+
+    if (pw.length < 6) { showErr(errorEl, 'Password must be at least 6 characters.'); return; }
+
+    if (DB.findUser(email)) {
+        showErr(errorEl, 'An account with this email already exists. Redirecting to Sign In…');
+        setTimeout(() => {
+            errorEl.style.display = 'none';
+            document.getElementById('signin-email').value = email;
+            navigateTo('signin');
+        }, 2000);
+        return;
+    }
+
+    DB.registerUser({ name, email, password: pw, age, height, type, looking, img });
+    DB.setSession(email);
+    updateNavUI();
+    this.reset();
+    errorEl.style.display = 'none';
+    navigateTo('home');
+    alert('Welcome to OrangeDate, ' + name + '! Your profile is now live 🎉');
+});
+
+// ═══════════════════════════════════════════════════════════════
+//  SIGN IN
+// ═══════════════════════════════════════════════════════════════
+document.getElementById('signinForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const errorEl = document.getElementById('signin-error');
+    const email   = document.getElementById('signin-email').value.trim().toLowerCase();
+    const pw      = document.getElementById('signin-password').value;
+    const user    = DB.findUser(email);
+
+    if (!user || user.password !== pw) {
+        showErr(errorEl, 'Incorrect email or password. Please try again.');
+        return;
+    }
+    errorEl.style.display = 'none';
+    DB.setSession(email);
+    updateNavUI();
+    this.reset();
+    navigateTo('home');
+    alert('Welcome back, ' + user.name + '! 👋');
+});
+
+function showErr(el, msg) { el.textContent = msg; el.style.display = 'block'; }
+
+// ═══════════════════════════════════════════════════════════════
+//  OPEN INBOX  (real user-to-user, no auto-replies)
+// ═══════════════════════════════════════════════════════════════
+function openInbox(targetEmail) {
+    const me = DB.currentUser();
+    if (!me) { navigateTo('signin'); return; }
+
+    const target = DB.findUser(targetEmail) || SEED.find(p => p.email === targetEmail);
+    if (!target) return;
+
+    activeChat = targetEmail;
+    DB.markRead(me.email, targetEmail, me.email);
+
+    document.getElementById('inbox-name').textContent = target.name;
+    document.getElementById('inbox-avatar').src = target.img || avatarURL(target.name);
+    document.getElementById('inbox-avatar').onerror = function() { this.src = avatarURL(target.name); };
+
+    navigateTo('inbox');
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  RENDER MESSAGES
+// ═══════════════════════════════════════════════════════════════
+function renderMessages() {
+    const me   = DB.currentUser();
+    const area = document.getElementById('messages-area');
+    if (!me || !activeChat) {
+        area.innerHTML = '<p style="text-align:center;color:#bbb;margin:auto;">Sign in to chat.</p>';
+        return;
+    }
+
+    const msgs = DB.getConv(me.email, activeChat);
+    if (msgs.length === 0) {
+        area.innerHTML = '<p style="text-align:center;color:#bbb;margin:auto;">Say hello! Your message will be waiting for them next time they open the app.</p>';
+        return;
+    }
+
+    area.innerHTML = msgs.map((m, i) => {
+        const sent = m.from === me.email;
+        if (m.type === 'voice') {
+            return `
+                <div class="msg-bubble ${sent?'sent':'received'} voice-note">
+                    <button class="voice-play-btn" onclick="playVoice(${i})">▶</button>
+                    <div class="voice-bar"><div class="voice-progress" id="vp-${i}"></div></div>
+                    <span class="voice-duration">${m.duration}s</span>
+                </div>
+                <div class="msg-time ${sent?'':'received-time'}">${m.time}</div>`;
+        }
+        return `
+            <div class="msg-bubble ${sent?'sent':'received'}">${escapeHTML(m.text)}</div>
+            <div class="msg-time ${sent?'':'received-time'}">${m.time}</div>`;
+    }).join('');
+    area.scrollTop = area.scrollHeight;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  SEND MESSAGE
+// ═══════════════════════════════════════════════════════════════
+function sendMessage() {
+    const me = DB.currentUser();
+    if (!me) { navigateTo('signin'); return; }
+    const input = document.getElementById('msg-input');
+    const text  = input.value.trim();
+    if (!text || !activeChat) return;
+    input.value = '';
+
+    DB.addMsg(me.email, activeChat, {
+        from: me.email, to: activeChat,
+        text, type: 'text', time: nowStr(), read: false
+    });
+
+    renderMessages();
+
+    // Forward notification to NOTIFY_EMAIL via EmailJS
+    emailjs.send(EJS_SERVICE, EJS_TEMPLATE, {
+        to_email:   NOTIFY_EMAIL,
+        from_name:  me.name,
+        from_email: me.email,
+        message:    `To: ${activeChat}\n\n${text}`,
+        subject:    `New message from ${me.name} on OrangeDate`
+    }).catch(() => {/* silent – app works without EmailJS */});
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  CHAT LIST
+// ═══════════════════════════════════════════════════════════════
+function renderChatList() {
+    const me   = DB.currentUser();
+    const body = document.getElementById('chat-list-body');
+    if (!me) {
+        body.innerHTML = '<div class="no-chats">Please <a href="#" onclick="navigateTo(\'signin\');return false;" style="color:var(--primary);">sign in</a> to view messages.</div>';
+        return;
+    }
+
+    const all    = DB.getAllConvs();
+    const convs  = [];
+    const allPeople = [...SEED, ...DB.getUsers()];
+
+    Object.keys(all).forEach(key => {
+        const parts = key.split('|||');
+        if (!parts.includes(me.email)) return;
+        const msgs  = all[key];
+        if (!msgs.length) return;
+        const last   = msgs[msgs.length - 1];
+        const unread = msgs.filter(m => m.to === me.email && !m.read).length;
+        const otherEmail = parts.find(e => e !== me.email);
+        const other = allPeople.find(p => p.email === otherEmail);
+        if (other) convs.push({ other, last, unread });
+    });
+
+    if (!convs.length) {
+        body.innerHTML = '<div class="no-chats">No conversations yet.<br>Message someone from the homepage to get started.</div>';
+        return;
+    }
+
+    convs.sort((a, b) => b.last.time.localeCompare(a.last.time));
+
+    body.innerHTML = convs.map(({ other, last, unread }) => {
+        const img     = other.img || avatarURL(other.name);
+        const preview = last.type === 'voice'
+            ? '🎤 Voice note'
+            : (last.from === me.email ? 'You: ' : '') + last.text;
+        return `
+            <div class="chat-list-item" onclick="openInbox('${other.email}')">
+                <img class="chat-list-avatar" src="${img}" alt="${other.name}"
+                     onerror="this.src='${avatarURL(other.name)}'">
+                <div class="chat-list-info">
+                    <div class="chat-list-name">${escapeHTML(other.name)}</div>
+                    <div class="chat-list-preview">${escapeHTML(preview)}</div>
+                </div>
+                <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+                    <span class="chat-list-time">${last.time}</span>
+                    ${unread > 0 ? `<span class="chat-unread">${unread}</span>` : ''}
+                </div>
+            </div>`;
+    }).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  VOICE NOTES
+// ═══════════════════════════════════════════════════════════════
+function toggleVoiceRecording() {
+    const me  = DB.currentUser();
+    if (!me)  { navigateTo('signin'); return; }
+    const btn = document.getElementById('voice-record-btn');
+    if (!isRecording) {
+        isRecording = true; recordingSeconds = 0;
+        btn.classList.add('recording'); btn.title = 'Tap to stop';
+        recordingTimer = setInterval(() => recordingSeconds++, 1000);
+    } else {
+        isRecording = false; clearInterval(recordingTimer);
+        btn.classList.remove('recording'); btn.title = 'Voice note';
+        const duration = Math.max(1, recordingSeconds);
+        DB.addMsg(me.email, activeChat, {
+            from: me.email, to: activeChat,
+            type: 'voice', duration, time: nowStr(), read: false
+        });
+        renderMessages();
+    }
+}
+
+function playVoice(i) {
+    const bar = document.getElementById('vp-' + i);
+    if (!bar) return;
+    let pct = 0;
+    const iv = setInterval(() => { pct += 2; bar.style.width = pct + '%'; if (pct >= 100) clearInterval(iv); }, 60);
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  CALLS
+// ═══════════════════════════════════════════════════════════════
+function startVideoCall(name) {
+    document.getElementById('video-call-name').textContent = name;
+    document.getElementById('video-call-label').textContent = name;
+    document.getElementById('video-call-status').textContent = 'Connecting…';
+    document.getElementById('video-screens').style.display = 'flex';
+    document.getElementById('vc-cam').style.display = 'flex';
+    document.getElementById('video-overlay').classList.add('active');
+    isMuted = false; isCamOff = false;
+    document.getElementById('vc-mute').textContent = '🎤';
+    document.getElementById('vc-cam').textContent  = '📹';
+    callTimer = setTimeout(() => document.getElementById('video-call-status').textContent = '● Live', 2000);
+}
+function startVideoCallFromInbox() {
+    if (!activeChat) return;
+    const t = DB.findUser(activeChat) || SEED.find(p => p.email === activeChat);
+    if (t) startVideoCall(t.name);
+}
+function startVoiceCall(name) {
+    document.getElementById('video-call-name').textContent = name;
+    document.getElementById('video-call-label').textContent = name;
+    document.getElementById('video-call-status').textContent = 'Calling…';
+    document.getElementById('video-screens').style.display = 'none';
+    document.getElementById('vc-cam').style.display = 'none';
+    document.getElementById('video-overlay').classList.add('active');
+    isMuted = false;
+    document.getElementById('vc-mute').textContent = '🎤';
+    callTimer = setTimeout(() => document.getElementById('video-call-status').textContent = '● Connected', 2000);
+}
+function startVoiceCallFromInbox() {
+    if (!activeChat) return;
+    const t = DB.findUser(activeChat) || SEED.find(p => p.email === activeChat);
+    if (t) startVoiceCall(t.name);
+}
+function endCall() {
+    clearTimeout(callTimer);
+    document.getElementById('video-overlay').classList.remove('active');
+    document.getElementById('video-screens').style.display = 'flex';
+    document.getElementById('vc-cam').style.display = 'flex';
+}
+function toggleMute() { isMuted = !isMuted; document.getElementById('vc-mute').textContent = isMuted ? '🔇' : '🎤'; }
+function toggleCam()  { isCamOff = !isCamOff; document.getElementById('vc-cam').textContent  = isCamOff ? '🚫' : '📹'; }
+
+// ═══════════════════════════════════════════════════════════════
+//  AI CHATBOT  (Gemini)
+// ═══════════════════════════════════════════════════════════════
+function openChatbot() {
+    const m = new bootstrap.Modal(document.getElementById('chatbotModal'));
+    m.show();
+    setTimeout(() => document.getElementById('chatbot-input').focus(), 400);
+}
+
+async function sendChatbotMessage() {
+    const input = document.getElementById('chatbot-input');
+    const text  = input.value.trim();
+    if (!text) return;
+    input.value = '';
+    input.disabled = true;
+
+    addBotBubble(text, 'user');
+    const dots = addBotBubble('Typing…', 'bot typing');
+
+    // Send to notification email
+    emailjs.send(EJS_SERVICE, EJS_TEMPLATE, {
+        to_email:   NOTIFY_EMAIL,
+        from_name:  DB.currentUser()?.name || 'Guest',
+        from_email: DB.currentUser()?.email || 'guest',
+        message:    '[Chatbot] ' + text,
+        subject:    'OrangeDate Chatbot Message'
+    }).catch(() => {});
+
+    try {
+        const res = await fetch(GEMINI_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{
+                    parts: [{
+                        text: `You are a warm, helpful assistant for OrangeDate, a dating app. Give concise, friendly advice on dating, profiles and using the app. Keep replies under 3 sentences.\n\nUser: ${text}`
+                    }]
+                }]
+            })
+        });
+        dots.remove();
+        if (!res.ok) throw new Error(res.status);
+        const data  = await res.json();
+        const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text
+            || "I couldn't generate a reply right now – try again in a moment!";
+        addBotBubble(reply, 'bot');
+    } catch (err) {
+        dots.remove();
+        addBotBubble('⚠️ AI unavailable. Make sure a valid Gemini API key is set in the config section.', 'bot');
+    }
+    input.disabled = false;
+    input.focus();
+}
+
+function addBotBubble(text, cls) {
+    const area = document.getElementById('chatbot-messages');
+    const div  = document.createElement('div');
+    div.className = 'chatbot-bubble ' + cls;
+    div.textContent = text;
+    area.appendChild(div);
+    area.scrollTop = area.scrollHeight;
+    return div;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  TIPS CAROUSEL
+// ═══════════════════════════════════════════════════════════════
+const TIPS = [
+    "Tip: A genuine smile in your profile picture gets 3x more matches!",
+    "Tip: Be honest about what you're looking for.",
+    "Tip: Ask open-ended questions to keep conversations flowing.",
+    "Tip: Confidence is attractive — be yourself!"
+];
+let tipIdx = 0;
+const tipEl = document.getElementById('tips');
+tipEl.textContent = TIPS[0];
+setInterval(() => {
+    tipIdx = (tipIdx + 1) % TIPS.length;
+    tipEl.style.opacity = 0;
+    setTimeout(() => { tipEl.textContent = TIPS[tipIdx]; tipEl.style.opacity = 1; }, 300);
+}, 4000);
+
+// ═══════════════════════════════════════════════════════════════
+//  UTILITIES
+// ═══════════════════════════════════════════════════════════════
+function nowStr() {
+    return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+function escapeHTML(s) {
+    return String(s)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════════════
+updateNavUI();
+renderProfiles();
+</script>
+</body>
+</html>
