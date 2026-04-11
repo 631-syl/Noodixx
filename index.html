@@ -391,7 +391,7 @@
 <div id="inbox" class="page">
     <div class="inbox-wrapper">
         <div class="inbox-header">
-            <button class="back-btn" onclick="navigateTo('chat')" title="Back">&#8592;</button>
+            <button class="back-btn" onclick="navigateTo('chat')" title="Back">Back &#8592;</button>
             <img id="inbox-avatar" src="" alt="">
             <span class="inbox-header-name" id="inbox-name"></span>
             <div class="inbox-call-btns">
@@ -500,7 +500,7 @@
                 </select>
             </div>
             <button class="profile-save-btn" onclick="saveProfile()">💾 Save Changes</button>
-            <div class="profile-save-success" id="profile-save-success">✓ Profile updated successfully!</div>
+            <div class="profile-save-success" id="profile-save-success">Profile updated successfully!</div>
         </div>
     </div>
 </div>
@@ -837,8 +837,8 @@ function renderProfiles() {
             ? `<span style="font-size:0.82rem;color:#bbb;padding:8px 0;">✓ Your profile</span>`
             : canChat
                 ? `<button class="btn-icon" onclick="openInbox('${p.email}')">💬 Message</button>
-                   <button class="btn-icon" onclick="startVoiceCall('${p.name}')">🎙️ Voice</button>
-                   <button class="btn-icon" onclick="startVideoCall('${p.name}')">📹 Video</button>`
+                   <button class="btn-icon" onclick="startVoiceCall('${p.name}')">Voice Call</button>
+                   <button class="btn-icon" onclick="startVideoCall('${p.name}')">Video Call</button>`
                 : `<button class="btn-icon" onclick="navigateTo('signin');return false;">Sign in to message</button>`;
 
         return `
