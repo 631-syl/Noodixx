@@ -429,19 +429,6 @@ const GEMINI_KEY = 'AIzaSyCGq4pSrZZXYxUBfIwNQ_W9m1Hc0EIxiBg';
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`;
 
 
-import { GoogleGenAI } from "@google/genai";
-
-// The client gets the API key from the environment variable `GEMINI_API_KEY`.
-const ai = new GoogleGenAI({});
-
-async function main() {
-  const response = await ai.models.generateContent({
-    model: "gemini-2.0-flash-preview",
-    contents: "Welcome",
-  });
-  console.log(response.text);
-}
-
 main();
 
 // EmailJS  →  https://www.emailjs.com  (free tier works)
