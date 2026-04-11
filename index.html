@@ -340,12 +340,12 @@
     <div class="modal-dialog modal-dialog-centered" style="max-width:420px;">
         <div class="modal-content chatbot-modal-content">
             <div class="modal-header chatbot-modal-header">
-                <h5 class="modal-title">💬 OrangeDate AI Assistant</h5>
+                <h5 class="modal-title">💬 Noodixx.com AI Assistant</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-0">
                 <div class="chatbot-messages" id="chatbot-messages">
-                    <div class="chatbot-bubble bot">Hi! 👋 I'm your Noodixx AI assistant. Ask me anything — dating tips, profile advice, or how to use the app!</div>
+                    <div class="chatbot-bubble bot">Hi! 👋 I'm your Noodixx AI assistant. Ask me anything — dating tips, profile advice, or how to use the website!</div>
                 </div>
                 <div class="chatbot-input-area">
                     <input type="text" id="chatbot-input" placeholder="Ask me anything…" onkeydown="if(event.key==='Enter')sendChatbotMessage()">
@@ -424,11 +424,8 @@ const DB = {
     }
 };
 
-// ═══════════════════════════════════════════════════════════════
-//  CONFIG  –  replace placeholder values with real credentials
-// ═══════════════════════════════════════════════════════════════
 // Gemini API key  →  https://aistudio.google.com/apikey
-const GEMINI_KEY = '';
+const GEMINI_KEY = 'AIzaSyCGq4pSrZZXYxUBfIwNQ_W9m1Hc0EIxiBg';
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`;
 
 // EmailJS  →  https://www.emailjs.com  (free tier works)
@@ -614,7 +611,7 @@ document.getElementById('signinForm').addEventListener('submit', function(e) {
 function showErr(el, msg) { el.textContent = msg; el.style.display = 'block'; }
 
 // ═══════════════════════════════════════════════════════════════
-//  OPEN INBOX  (real user-to-user, no auto-replies)
+//  OPEN INBOX 
 // ═══════════════════════════════════════════════════════════════
 function openInbox(targetEmail) {
     const me = DB.currentUser();
@@ -668,9 +665,7 @@ function renderMessages() {
     area.scrollTop = area.scrollHeight;
 }
 
-// ═══════════════════════════════════════════════════════════════
 //  SEND MESSAGE
-// ═══════════════════════════════════════════════════════════════
 function sendMessage() {
     const me = DB.currentUser();
     if (!me) { navigateTo('signin'); return; }
@@ -696,9 +691,7 @@ function sendMessage() {
     }).catch(() => {/* silent – app works without EmailJS */});
 }
 
-// ═══════════════════════════════════════════════════════════════
 //  CHAT LIST
-// ═══════════════════════════════════════════════════════════════
 function renderChatList() {
     const me   = DB.currentUser();
     const body = document.getElementById('chat-list-body');
@@ -851,7 +844,7 @@ async function sendChatbotMessage() {
         from_name:  DB.currentUser()?.name || 'Guest',
         from_email: DB.currentUser()?.email || 'guest',
         message:    '[Chatbot] ' + text,
-        subject:    'OrangeDate Chatbot Message'
+        subject:    'Noodixx Chatbot Message'
     }).catch(() => {});
 
     try {
@@ -861,7 +854,7 @@ async function sendChatbotMessage() {
             body: JSON.stringify({
                 contents: [{
                     parts: [{
-                        text: `You are a warm, helpful assistant for OrangeDate, a dating app. Give concise, friendly advice on dating, profiles and using the app. Keep replies under 3 sentences.\n\nUser: ${text}`
+                        text: `You are a warm, helpful assistant for Noodixx, a dating website. Give concise, friendly advice on dating, profiles and using the app. Keep replies under 3 sentences.\n\nUser: ${text}`
                     }]
                 }]
             })
