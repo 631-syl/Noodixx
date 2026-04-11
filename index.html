@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OrangeDate - Real Connections</title>
+    <title>NOODIXX - Find your match</title>
 
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -183,7 +183,7 @@
 
 <!-- NAV -->
 <nav>
-    <div class="logo" onclick="navigateTo('home')">Love Birds.com</div>
+    <div class="logo" onclick="navigateTo('home')">NOODIXX.com</div>
     <div style="display:flex;align-items:center;gap:12px;">
         <span id="nav-user-badge"></span>
         <div class="dropdown">
@@ -202,10 +202,10 @@
 <!-- HOME PAGE -->
 <div id="home" class="page active">
     <div class="welcome-section">
-        <h1>Welcome to OrangeDate</h1>
-        <p>Where Real Connections Happen.</p>
+        <h1>Welcome to Noodixx.com</h1>
+        <p>Where Real Connections are formed</p>
     </div>
-    <div class="tips-carousel" id="tips">Loading dating tips...</div>
+    <div class="tips-carousel" id="tips">Dating tips just for you...</div>
     <div class="profiles-grid" id="profile-feed"></div>
 </div>
 
@@ -254,7 +254,7 @@
                 </select>
             </div>
             <div class="form-group">
-                <label>Profile Photo URL <span style="font-weight:normal;color:#999;">(optional)</span></label>
+                <label>Profile Photo<span style="font-weight:normal;color:#999;">(optional)</span></label>
                 <input type="url" id="reg-photo" placeholder="https://... (leave blank for default)">
             </div>
             <div class="form-error" id="reg-error"></div>
@@ -302,8 +302,8 @@
             <img id="inbox-avatar" src="" alt="">
             <span class="inbox-header-name" id="inbox-name"></span>
             <div class="inbox-call-btns">
-                <button class="call-btn" onclick="startVoiceCallFromInbox()" title="Voice call">🎙️</button>
-                <button class="call-btn" onclick="startVideoCallFromInbox()" title="Video call">📹</button>
+                <button class="call-btn" onclick="startVoiceCallFromInbox()" title="Voice call">📞</button>
+                <button class="call-btn" onclick="startVideoCallFromInbox()" title="Video call"><i class="bi bi-camera-video-fill"></i></button>
             </div>
         </div>
         <div class="messages-area" id="messages-area">
@@ -321,14 +321,14 @@
 <div class="video-overlay" id="video-overlay">
     <div class="video-screens" id="video-screens">
         <div class="video-screen"><span>🙂</span><span class="video-screen-label">You</span></div>
-        <div class="video-screen"><span>😊</span><span class="video-screen-label" id="video-call-label"></span></div>
+        <div class="video-screen"><span>🙂</span><span class="video-screen-label" id="video-call-label"></span></div>
     </div>
     <div class="video-call-name" id="video-call-name"></div>
     <div class="video-call-status" id="video-call-status">Connecting…</div>
     <div class="video-controls">
-        <button class="vc-btn mute" id="vc-mute" onclick="toggleMute()">🎤</button>
-        <button class="vc-btn end" onclick="endCall()">📵</button>
-        <button class="vc-btn cam" id="vc-cam" onclick="toggleCam()">📹</button>
+        <button class="vc-btn mute" id="vc-mute" onclick="toggleMute()">Mute🔇</button>
+        <button class="vc-btn end" onclick="endCall()">End Call📵</button>
+        <button class="vc-btn cam" id="vc-cam" onclick="toggleCam()"><i class="bi bi-camera-video-fill"></i>Open Camera</button>
     </div>
 </div>
 
@@ -345,7 +345,7 @@
             </div>
             <div class="modal-body p-0">
                 <div class="chatbot-messages" id="chatbot-messages">
-                    <div class="chatbot-bubble bot">Hi! 👋 I'm your OrangeDate assistant. Ask me anything — dating tips, profile advice, or how to use the app!</div>
+                    <div class="chatbot-bubble bot">Hi! 👋 I'm your Noodixx AI assistant. Ask me anything — dating tips, profile advice, or how to use the app!</div>
                 </div>
                 <div class="chatbot-input-area">
                     <input type="text" id="chatbot-input" placeholder="Ask me anything…" onkeydown="if(event.key==='Enter')sendChatbotMessage()">
@@ -363,7 +363,7 @@
         <a href="#">Privacy Policy</a>
         <a href="#">Terms of Service</a>
     </div>
-    <p style="margin-top:10px;font-size:0.8rem;color:#666;">© 2026 OrangeDate. All rights reserved.</p>
+    <p style="margin-top:10px;font-size:0.8rem;color:#666;">© 2026 Noodixx. All rights reserved.</p>
 </footer>
 
 <!-- Bootstrap 5 JS -->
@@ -692,7 +692,7 @@ function sendMessage() {
         from_name:  me.name,
         from_email: me.email,
         message:    `To: ${activeChat}\n\n${text}`,
-        subject:    `New message from ${me.name} on OrangeDate`
+        subject:    `New message from ${me.name} on Noodixx`
     }).catch(() => {/* silent – app works without EmailJS */});
 }
 
