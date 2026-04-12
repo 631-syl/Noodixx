@@ -33,7 +33,7 @@ const CONFIG = {
     NOTIFY_EMAIL: 'newthings334@gmail.com',
 
     // Gemini (kept for reference; chatbot now uses EmailJS only)
-    GEMINI_KEY: 'AIzaSyCGq4pSrZZXYxUBfIwNQ_W9m1Hc0EIxiBg',
+    GEMINI_KEY: 'AIzaSyAVV5EMrZFlBwgaLerCeTAPzlChqaaxhBo',
     get GEMINI_URL() {
         return `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${this.GEMINI_KEY}`;
     }
