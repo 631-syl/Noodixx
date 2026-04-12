@@ -602,8 +602,7 @@ async function sendChatbotMessage() {
         });
         dots.remove();
         addBotBubble(
-            'Your message has been sent! Our team will get back to you at ' +
-            (user?.email || 'your email') + ' as soon as possible.',
+            'Your message has been sent! Our team will get back to you as soon as possible.',
             'bot'
         );
     } catch {
