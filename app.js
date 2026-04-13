@@ -105,7 +105,11 @@ function updateNavUI() {
         logout.style.display   = 'none';
     }
 }
-
+function toggleMuteHomepageVideo(btn) {
+      const v = document.getElementById('homepage-video');
+      v.muted = !v.muted;
+      btn.textContent = v.muted ? '🔇 Unmute' : '🔊 Mute';
+   }
 function logOut() {
     DB.clearSession();
     updateNavUI();
